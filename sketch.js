@@ -5,6 +5,8 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 
+gameState = "notDropped";
+
 function preload()
 {
 	helicopterIMG=loadImage("helicopter.png")
@@ -15,10 +17,10 @@ function setup() {
 	createCanvas(800, 700);
 	rectMode(CENTER);
 	
-
-	packageSprite=createSprite(width/2, 80, 10,10);
+	packageSprite=createSprite(width/2, 200, 10,10);
 	packageSprite.addImage(packageIMG)
 	packageSprite.scale=0.2
+	//packageSprite.debug = true;
 
 	helicopterSprite=createSprite(width/2, 200, 10,10);
 	helicopterSprite.addImage(helicopterIMG)
@@ -44,60 +46,62 @@ function setup() {
 
 
  	boxleftSprite=createSprite(boxPosition, boxY, 20,100);
- 	boxleftSprite.shapeColor=color(255,0,0);
+	boxleftSprite.shapeColor=color(255,0,0);
+	//boxleftSprite.debug = true;
 
  	boxLeftBody = Bodies.rectangle(boxPosition+20, boxY, 20,100 , {isStatic:true} );
  	World.add(world, boxLeftBody);
 
  	boxBase=createSprite(boxPosition+100, boxY+40, 200,20);
- 	boxBase.shapeColor=color(255,0,0);
+	boxBase.shapeColor=color(255,0,0);
+	//boxBase.debug = true;
 
  	boxBottomBody = Bodies.rectangle(boxPosition+100, boxY+45-20, 200,20 , {isStatic:true} );
  	World.add(world, boxBottomBody);
 
- 	boxleftSprite=createSprite(boxPosition+200 , boxY, 20,100);
- 	boxleftSprite.shapeColor=color(255,0,0);
+ 	boxrightSprite=createSprite(boxPosition+200 , boxY, 20,100);
+	boxrightSprite.shapeColor=color(255,0,0);
+	//boxrightSprite.debug = true;
 
  	boxRightBody = Bodies.rectangle(boxPosition+200-20 , boxY, 20,100 , {isStatic:true} );
  	World.add(world, boxRightBody);
 
 
-	Engine.run(engine);
-  
+	//Engine.run(engine);
 }
 
 
 function draw() {
-  rectMode(CENTER);
+  //rectMode(CENTER);
   background(0);
+  Engine.update(engine);
  
   packageSprite.x= packageBody.position.x 
   packageSprite.y= packageBody.position.y 
 
   
   drawSprites();
-  
-  
- 
 }
 
 function keyPressed() {
-  if (keyCode === LEFT_ARROW) {
-
-    helicopterSprite.x=helicopterSprite.x-20;    
-    translation={x:-20,y:0}
-    Matter.Body.translate(packageBody, translation)
-
-
-  } else if (keyCode === RIGHT_ARROW) {
-    helicopterSprite.x=helicopterSprite.x+20;
-    translation={x:20,y:0}
-    Matter.Body.translate(packageBody, translation)
-  }
-  else if (keyCode === DOWN_ARROW) {
-    Matter.Body.setStatic(packageBody,false);
-    
-  }
+	if (keyCode === LEFT_ARROW) {
+	  helicopterSprite.x=helicopterSprite.x-20;
+	  if(gameState === "notDropped"){
+		translation={x:-20,y:0}
+		Matter.Body.translate(packageBody, translation);
+	  }
+	}
+	else if (keyCode === RIGHT_ARROW) {
+	  helicopterSprite.x=helicopterSprite.x+20;
+	  if(gameState === "notDropped"){
+		translation={x:20,y:0}
+		Matter.Body.translate(packageBody, translation);
+	  }
+	}
+	else if (keyCode === DOWN_ARROW) {
+	  Matter.Body.setStatic(packageBody,false);
+	  gameState = "dropped";
+	}
 }
 
 
